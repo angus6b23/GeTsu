@@ -1,13 +1,47 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
 const monthName = ref(['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Septemer', 'October', 'November', 'December']);
 const month = ref('');
 const year = ref('');
 const days = ref(0);
-const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const today = new Date();
 const firstWeekday = ref(0);
 const customTitle = ref('');
+const selectedFont = ref("'IBM Plex Mono', monospace");
+const fonts = [{
+    display: 'Anonymous Pro',
+    css: "'Anonymous Pro', monospace"
+},
+{
+    display: 'IBM Plex Mono',
+    css: "'IBM Plex Mono', monospace"
+},
+{
+    display: 'Indie Flower',
+    css: "'Indie Flower', cursive"
+},
+{
+    display: 'Noto Sans',
+    css: "'Noto Sans', sans-serif"
+},
+{
+    display: 'Noto Sans Mono',
+    css: "'Noto Sans Mono', monospace"
+},
+{
+    display: 'Space Mono',
+    css: "'Space Mono', monospace"
+},
+{
+    display: 'Ubuntu',
+    css: "'Ubuntu', sans-serif"
+},
+{
+    display: 'Ubuntu Mono',
+    css: "'Ubuntu Mono', monospace"
+}
+]
+const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 month.value = today.getMonth() + 1;
 year.value = today.getYear() + 1900;
 function getDays(){
@@ -37,23 +71,29 @@ watch(year, getDays);
         <div class="controller-wrapper">
             <form class="pure-form-stacked">
                 <div class="pure-g">
-                    <div class="pure-u-1-4 x-center">
+                    <div class="pure-u-1-5 x-center">
                         <label for="year-select" class="text-align-center">Year:</label>
                         <select name="year-select" v-model="year" class="x-center">
                             <option v-for="i in (201)" :value="1999+i">{{1999+i}}</option>
                         </select>
                     </div>
-                    <div class="pure-u-1-4 x-center">
+                    <div class="pure-u-1-5 x-center">
                         <label for="year-select" class="text-align-center">Month:</label>
                         <select name="month-select" v-model="month" class="x-center">
                             <option v-for="i in (12)" :value="i">{{i}}</option>
                         </select>
                     </div>
-                    <div class="pure-u-1-4 x-center">
+                    <div class="pure-u-1-5 x-center">
                         <label for="title" class="x-center" style="margin: 0.25em 0">Title(optional):</label>
                         <input type="text" name="title" v-model="customTitle" />
                     </div>
-                    <div class="pure-u-1-4">
+                    <div class="pure-u-1-5 x-center">
+                        <label for="font-select" class="text-align-center">Font:</label>
+                        <select name="font-select" v-model="selectedFont" class="x-center">
+                            <option v-for="font in fonts" :value="font.css">{{font.display}}</option>
+                        </select>
+                    </div>
+                    <div class="pure-u-1-5">
                         <a class="pure-button pure-button-primary x-center" style="display:block; height: 100%; line-height: 50px" @click="window.print()">Print</a>
                     </div>
                 </div>
@@ -62,7 +102,7 @@ watch(year, getDays);
     </header>
     <body>
         <div class="paper-wrapper">
-            <div class="print-wrapper">
+            <div class="print-wrapper" :style="{'--font': selectedFont}">
                 <h1>{{ monthName[month] }} {{year}}</h1>
                 <h2 class="custom-title">{{ customTitle }}</h2>
                 <table>
@@ -118,6 +158,7 @@ input{
     border: 1px solid black;
 }
 .print-wrapper{
+    font-family: var(--font);
     padding: 12.7mm;
 }
 table{
@@ -154,6 +195,7 @@ table td{
 }
 </style>
 <style>
+@import url('https://api.fonts.coollabs.io/css2?family=Anonymous+Pro&family=IBM+Plex+Mono&family=Indie+Flower&family=Noto+Sans&family=Noto+Sans+Mono&family=Space+Mono&family=Ubuntu&family=Ubuntu+Mono&display=swap');
 #app{
     padding: 0px !important;
 }
