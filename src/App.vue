@@ -145,6 +145,7 @@ input{
 }
 .custom-title{
     margin-bottom: 5px;
+    word-break: break-all;
 }
 .paper-wrapper{
     margin: auto;
