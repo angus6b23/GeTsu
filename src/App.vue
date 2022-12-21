@@ -57,13 +57,10 @@ function getWeekday(day){
     let weekday = (firstWeekday.value + day - 1) % 7;
     return weekdays[weekday];
 };
-
 getDays();
 console.log(firstWeekday.value);
 watch(month, getDays);
 watch(year, getDays);
-
-
 </script>
 
 <template>
