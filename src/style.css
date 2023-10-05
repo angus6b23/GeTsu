@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print{
+	.not-for-print{
+		display: none;
+	}
+	.paper-section{
+		margin: 0px;
+		padding: 0px;
+		color: black;
+	}
+	.paper-wrapper{
+		border: none;
+		width: 100% !important;
+		margin-top: 0px !important;
+	}
+	.paper-wrapper > div {
+		margin: 0px;
+		padding: 0px;
+	}
+	table {
+		border: 1px solid black;
+	}
+	table tr {
+		height: 0.8cm !important;
+	}
+	table td{
+		border: 1px solid black;
+	}
+}

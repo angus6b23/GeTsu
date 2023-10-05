@@ -1,33 +1,51 @@
 <template>
-    <div class="sticky m-0 bg-base-300 min-h-[15vh] h-fit flex justify-center items-center">
+    <div class="sticky m-0 bg-base-300 min-h-[15vh] h-fit flex justify-center items-center not-for-print">
         <form class="h-full w-full">
             <div class="h-full w-full grid grid-cols-4 p-4">
-                <div class="col-span-3 grid grid-cols-2 lg:grid-cols-6">
+                <div class="col-span-3 grid grid-cols-2 lg:grid-cols-8">
                     <div class="flex items-center justify-center flex-wrap col-span-1">
-                        <label class="label mr-2" for="year-select">
-                            <span class="label-text text-lg">Year</span>
-                        </label>
-                        <select name="year-select" class="select select-bordered text-lg" :value="props.option.year" @change="updateOption('year', $event.target.value)">
-                            <option v-for="i in (201)" :value="1999+i" >{{1999+i}}</option>
-                        </select>
+                        <div>
+                            <label class="label mr-2" for="year-select">
+                                <span class="label-text text-lg">Year</span>
+                            </label>
+                            <select name="year-select" class="select select-bordered text-lg" v-model="innerOption.year">
+                                <option v-for="i in (201)" :value="1999+i" >{{ 1999+i }}</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="flex items-center justify-center col-span-1">
-                        <label class="label mr-2" for="year-select">
-                            <span class="labe-text text-lg">Month</span>
+                        <div>
+                            <label class="label mr-2" for="year-select">
+                                <span class="labe-text text-lg">Month</span>
+                            </label>
+                            <select name="month-select" class="select select-bordered text-lg" v-model="innerOption.month">
+                                <option v-for="i in (12)" :value="i">{{i}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex item-center justify-center col-span-2 p-8 form-control">
+                        <label class="label" for="show-holiday">
+                            <span class="label-text text-lg">Show Holidays</span>
+                            <input name="show-holiday" v-model="innerOption.showHoliday" type="checkbox" class="toggle toggle-primary" />
                         </label>
-                        <select name="month-select" class="select select-bordered text-lg" :value="props.option.month" @change="updateOption('month', $event.target.value)">
-                            <option v-for="i in (12)" :value="i">{{i}}</option>
+                        <select name="country-select" class="select select-bordered text-lg" v-model="innerOption.country" :disabled="!innerOption.showHoliday">
+                            <option disabled selected value='unknown'>Please Select country</option>
+                            <option v-for="country of countryList" :value="country.countryCode">{{ country.name }}</option>
                         </select>
                     </div>
                     <div class="flex items-center justify-center flex-wrap lg:col-span-2">
-                        <label for="title" class="label text-lg mr-2">Title</label>
-                        <input type="text" :value="props.option.title" class="input input-bordered text-lg w-[75%]" placeholder="Optional Title" @input="updateOption('title', $event.target.value)" name="title"/>
+                        <div>
+                            <label for="title" class="label text-lg mr-2">Title</label>
+                            <input type="text" v-model="innerOption.title" class="input input-bordered text-lg" placeholder="Optional Title"  name="title"/>
+                        </div>
                     </div>
                     <div class="flex items-center justify-center flex-wrap lg:col-span-2">
-                        <label for="font-select" class="label text-lg mr-2">Font:</label>
-                        <select name="font-select" class="select select-bordered text-lg" :value="props.option.font" @change="updateOption('font', $event.target.value)">
-                            <option v-for="font of fonts" :value="font.className">{{ font.display }}</option>
-                        </select>
+                        <div>
+                            <label for="font-select" class="label text-lg mr-2">Font:</label>
+                            <select name="font-select" class="select select-bordered text-lg" v-model="innerOption.font">
+                                <option v-for="font of fonts" :value="font.className">{{ font.display }}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="cols-span-1 grid grid-cols-3 grid-rows-2 p-4">
@@ -42,7 +60,7 @@
                         </label> 
                     </div>
                     <div class="col-span-2 row-span-2">
-                        <button class="btn btn-primary text-2xl w-full h-full" @click="window.print()">Print</button>
+                        <button class="btn btn-primary text-2xl w-full h-full" @click.prevent="window.print()">Print</button>
                     </div>
                 </div>
             </div>
@@ -50,15 +68,20 @@
     </div>
 </template>
 <script setup>
+import { ref, watch, onMounted } from 'vue'
 import { fonts } from '../utils/styles'
+import { getAvailableCountries } from '../utils/holiday'
 const props = defineProps(['option']);
 const emit = defineEmits(['update:option', 'changeTheme']);
+const innerOption = ref(props.option);
+const countryList = ref([]);
 
-const updateOption = (type, value) => {
-    let newOption = {
-        ...props.option,
-        [type]: value
-    }
+onMounted(async () => {
+    const avaliableCountries = await getAvailableCountries();
+    countryList.value = avaliableCountries;
+});
+
+watch(() => innerOption, (newOption) => {
     emit('update:option', newOption);
-}
+});
 </script>

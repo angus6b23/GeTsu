@@ -1,6 +1,5 @@
 import moment from "moment";
-
-const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'Septemer', 'October', 'November', 'December'];
+import * as ct from 'countries-and-timezones'
 
 const getNumberOfDays = (year, month) => {
     if (month == 2 && year % 4 == 0) return 29
@@ -20,4 +19,7 @@ const isSunday = (year, month, day) =>{
     return date.getDay() === 0
 }
 
-export { months, getNumberOfDays, isWeekend, isSunday }
+const guessCountry = () => {
+    return ct.getCountryForTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)
+}
+export { getNumberOfDays, isWeekend, isSunday, guessCountry }
