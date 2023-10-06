@@ -16,8 +16,16 @@
                                 :class="{'font-bold': isWeekend(props.option.year, props.option.month, day) || isHoliday(day), 'text-red-500': isSunday(props.option.year, props.option.month, day) || isHoliday(day)}">
                                 {{ getLocaleWeekday(day) }}
                             </td>
-                            <td class="col-span-10  border p-0">
-                                <span v-if="isHoliday(day)" class="text-lg ml-2">{{ getHolidayDetails(day).localName }}</span>
+                            <td class="col-span-10 border p-0">
+                                <p  v-if="isHoliday(day) && option.advanced.showHolidayText"
+                                    class="text-lg px-2" 
+                                    :class="{
+                                    'text-right': props.option.advanced.holidayAlign === 'right',
+                                    'text-center': props.option.advanced.holidayAlign === 'center',
+                                    'text-left': props.option.advanced.holidayAlign === 'left'}"
+                                    >
+                                    {{ props.option.advanced.useLocalName ? getHolidayDetails(day).localName : getHolidayDetails(day).name }}
+                                </p>
                             </td>
                         </tr>
                     </tbody>
@@ -36,7 +44,7 @@ const holidays = ref([]);
 const fetchHolidays = async () => {
     if (props.option.showHoliday){
         let holidayRes = await getHolidays(props.option.year, props.option.month, props.option.country);
-        holidays.value = holidayRes
+        holidays.value = holidayRes === undefined ? [] : holidayRes;
     } else {
         holidays.value = []
     }
@@ -47,7 +55,13 @@ const daysOfMonth = computed(() => getNumberOfDays(props.option.year, props.opti
 const getLocaleWeekday = (day) => moment(`${props.option.year}-${props.option.month}-${day}`).format('ddd');
 const getLocaleMonth = () => moment(`${props.option.year}-${props.option.month}-01`).format('MMMM');
 const isHoliday = (day) => {
-    return holidays.value.some(holiday => holiday.day === day);
+    if (props.option.advanced.region === 'all'){
+        return holidays.value.some(holiday => holiday.day === day);
+    } else {
+        return holidays.value.some(holiday => {
+            return holiday.day === day && (holiday.counties == null || holiday.counties.includes(props.option.advanced.region)) 
+        })
+    }
 };
 const getHolidayDetails = (day) =>{
     if (props.option.showHoliday){

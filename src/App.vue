@@ -1,6 +1,6 @@
 <template>
     <div :data-theme="theme">
-        <Topbar :option="option" @update:option="handleUpdateOption" @changeTheme="changeTheme"/>
+        <Topbar :option="option" @changeTheme="changeTheme"/>
         <PaperArea :option="option" />
     </div>
 </template>
@@ -19,12 +19,16 @@ const option = ref({
     font: "font-ibm",
     country: country,
     showHoliday: true,
+    advanced:{
+        showHolidayText: true,
+        boldWeekends: true,
+        region: 'all',
+        useLocalName: true,
+        holidayAlign: 'left'
+    }
 })
 const theme =ref('bumblebee');
 
-const handleUpdateOption = (newOption) =>{
-    option.value = newOption;
-}
 const changeTheme = () =>{
     theme.value = theme.value === 'bumblebee' ? 'forest' : 'bumblebee';
 }
