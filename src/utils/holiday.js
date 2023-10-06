@@ -20,6 +20,7 @@ const getHolidays = async (year, month, countryId, raw = false) => {
 }
 
 const getRegions = async (countryId) =>{
+    if (countryId === 'unknown') return [];
     if (memory[`region-${countryId}`]) {
         return memory[`region-${countryId}`]
     }
