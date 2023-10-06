@@ -48,23 +48,20 @@
                         </div>
                     </div>
                 </div>
-                <div class="cols-span-4 col-span-1 grid grid-cols-3 grid-rows-2 p-4 gap-2">
+                <div class="col-span-1 grid grid-cols-3 grid-rows-2 p-4 gap-2">
                     <div class="col-span-1 row-span-1 flex justify-center items-center">
                         <label class="swap swap-rotate">
-                            <!-- this hidden checkbox controls the state -->
                             <input type="checkbox" @change="$emit('changeTheme')" />
-                            <!-- sun icon -->
-                            <sunSVG />
-                            <!-- moon icon -->
-                            <moonSVG />
-                        </label> 
+                            <sunSVG class="fill-current stroke-current w-8 h-8" />
+                            <moonSVG class="fill-current stroke-current w-8 h-8" />
+                        </label>
                     </div>
                     <div class="col-span-2 row-span-2">
                         <button class="btn btn-primary text-2xl w-full h-full" @click.prevent="window.print()">Print</button>
                     </div>
                     <div class="col-span-1 row-span-1 flex justify-center items-center">
                         <a class="cursor-pointer hover:rotate-180 duration-200" @click.prevent="modal.showModal()">
-                            <cogSVG />
+                            <cogSVG class="w-8 h-8 stroke-current fill-current" />
                         </a>
                         <dialog ref="modal" class="modal">
                         <div class="modal-box">
@@ -75,7 +72,6 @@
                         </form>
                         </dialog>
                     </div>
-
                 </div>
             </div>
         </form>
