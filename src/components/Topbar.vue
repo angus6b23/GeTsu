@@ -64,7 +64,7 @@
                             <cogSVG class="w-8 h-8 stroke-current fill-current" />
                         </a>
                         <dialog ref="modal" class="modal">
-                        <div class="modal-box">
+                        <div class="modal-box w-full lg:w-4/5 xl:w-3/5 max-w-5xl">
                             <OptionModal :option="innerOption" />
                         </div>
                         <form method="dialog" class="modal-backdrop">

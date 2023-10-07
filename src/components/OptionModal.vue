@@ -21,6 +21,12 @@
                     <option v-for="i in (12)" :value="i">{{i}}</option>
                 </select>
                 <label class="label">
+                    <span class="label-text text-lg">Locale</span>
+                </label>
+                <select class="w-full select select-bordered text-lg" v-model="modalOption.locale">
+                    <option v-for="code of moment.locales()" :value="code">{{ getNativeName(code) }}</option>
+                </select>
+                <label class="label">
                     <span class="label-text text-lg">Title</span>
                 </label>
                 <input type="text" class="w-full input input-bordered" placeholder="Optional title" v-model="modalOption.title" />
@@ -65,7 +71,7 @@
                     <option v-for="region of regionList" :value="region">{{ region }}</option>
                 </select>
                 <label class="label">
-                    <span class="label-text text-lg">Show name of holiday in planning section</span>
+                    <span class="label-text text-lg">Show name of holiday</span>
                 </label>
                 <div class="flex items-center justify-center">
                     <input type="checkbox" class="toggle toggle-primary" :disabled="!modalOption.showHoliday" v-model="modalOption.advanced.showHolidayText" />
@@ -74,34 +80,89 @@
                     <span class="label-text text-lg">Show local name of holiday</span>
                 </label>
                 <div class="flex items-center justify-center">
-                    <input type="checkbox" class="toggle toggle-primary" :disabled="!modalOption.advanced.showHolidayText || !modalOption.showHoliday" v-model="modalOption.advanced.useLocalName" />
+                    <input type="checkbox" class="toggle toggle-primary" :disabled="holidayAdvancedDisabled" v-model="modalOption.advanced.useLocalName" />
                 </div>
                 <label class="label">
                     <span class="label-text text-lg">Holiday text position</span>
                 </label>
-                <div class="join">
-                    <input class="join-item btn" type="radio" name="holidayAlign" v-model="modalOption.advanced.holidayAlign" value="left" :disabled="!modalOption.advanced.showHolidayText || !modalOption.showHoliday" aria-label="Left" />
-                    <input class="join-item btn" type="radio" name="holidayAlign" v-model="modalOption.advanced.holidayAlign" value="center" :disabled="!modalOption.advanced.showHolidayText || !modalOption.showHoliday" aria-label="Center" />
-                    <input class="join-item btn" type="radio" name="holidayAlign" v-model="modalOption.advanced.holidayAlign" value="right" :disabled="!modalOption.advanced.showHolidayText || !modalOption.showHoliday" aria-label="Right" />
+                <div class="flex justify-center">
+                    <div class="join">
+                        <input class="join-item btn" type="radio" name="holidayAlign" v-model="modalOption.advanced.holidayAlign" value="left" :disabled="holidayAdvancedDisabled" aria-label="Left" />
+                        <input class="join-item btn" type="radio" name="holidayAlign" v-model="modalOption.advanced.holidayAlign" value="center" :disabled="holidayAdvancedDisabled" aria-label="Center" />
+                        <input class="join-item btn" type="radio" name="holidayAlign" v-model="modalOption.advanced.holidayAlign" value="right" :disabled="holidayAdvancedDisabled" aria-label="Right" />
+                    </div>
+                </div>
+                <label class="label">
+                    <span class="label-text text-lg">Bold Weekends</span>
+                </label>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" class="toggle toggle-primary" v-model="modalOption.advanced.boldWeekends" />
+                </div>
+                <label class="label">
+                    <span class="label-text text-lg">Holiday and Sunday Color</span>
+                </label>
+                <div class="flex items-center justify-center">
+                    <div class="h-8 w-8 rounded mr-10" :style="holidayBgStyle"></div> 
+                    <button class="btn" @click.prevent="colorModal.showModal()">Change</button>
                 </div>
             </div>
         </div>
     </div>
+    <dialog ref="colorModal" class="modal">
+
+    <div class="modal-box">
+        <ColorPicker :color="modalOption.advanced.holidayColor" default-format="hex" alpha-channel="hide" @color-change="updateColor" />
+        <form method="dialog" class="flex gap-4 items-center">
+            <!-- if there is a button in form, it will close the modal -->
+            <div class="h-8 w-8 rounded" :style="holidayBgStyle"></div>
+            <button class="btn">Close</button>
+        </form>
+    </div> 
+    </dialog>
 </template>
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { fonts } from '../utils/styles';
 import { getAvailableCountries, getRegions } from '../utils/holiday';
-
+import { ColorPicker } from 'vue-accessible-color-picker';
+import moment from 'moment/min/moment-with-locales';
+import ISO6391 from 'iso-639-1'
 const props = defineProps(['option']);
 const modalOption = ref(props.option);
 const countryList = ref([]);
 const regionList = ref([]);
+const colorModal = ref(null);
 
+const holidayAdvancedDisabled = computed(() => !modalOption.value.advanced.showHolidayText || !modalOption.value.showHoliday);
+const holidayBgStyle = computed(() => { 
+    return {
+        'background-color': modalOption.value.advanced.holidayColor 
+    }
+})
+
+const updateColor = ({colors}) =>{
+    let hex = colors.hex.replace(/ff$/, '');
+    modalOption.value.advanced.holidayColor = hex;
+}
+
+const getNativeName = (code) =>{
+    if (code.length > 5 ){
+        return code;
+    }
+    if (code.includes('-')){
+        let language = ISO6391.getNativeName(code.substring(0,2));
+        let newLanguage = new Intl.DisplayNames([code], { type: 'region' });
+        let regionName = newLanguage.of(code.substring(3, 5).toUpperCase());
+        return `${language} (${regionName})`
+    } else {
+        return ISO6391.getNativeName(code);
+    }
+}
 onMounted(async () => {
     countryList.value = await getAvailableCountries();
     regionList.value = await getRegions(modalOption.value.country);
 });
+
 watch(props.option, async () =>{
     regionList.value = await getRegions(modalOption.value.country);
 });

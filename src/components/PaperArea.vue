@@ -1,22 +1,28 @@
 <template>
-    <section class="flex justify-center mt-10 paper-section">
-        <div class="lg:w-[210mm] lg:h-[297mm] border-2 mt10 paper-wrapper" :class="props.option.font">
-            <div class="w-full h-full px-20 py-4">
+    <section class="flex justify-center mt-4 lg:mt-10 paper-section">
+        <div class="lg:w-[210mm] lg:h-[297mm] lg:border-2 lg:mt-10 w-full paper-wrapper" :class="props.option.font">
+            <div class="w-full h-full lg:px-20 lg:py-4 px-4 py-2">
                 <h1 class="text-3xl my-2">{{ getLocaleMonth() }} {{ props.option.year }}</h1>
                 <h2 class="text-2xl mb-2">{{ props.option.title }}</h2>
                 <table class="w-full border-collapse border">
                     <tbody class=" p-0">
-                        <tr v-for="day in daysOfMonth" class="h-8 grid grid-cols-12 gap-0  w-full p-0">
+                        <tr v-for="day in daysOfMonth" class="h-8 grid grid-cols-6 lg:grid-cols-12 gap-0 w-full p-0">
                             <td class="col-span-1  border text-center text-lg p-0"
-                                :class="{'font-bold': isWeekend(props.option.year, props.option.month, day) || isHoliday(day), 'text-red-500': isSunday(props.option.year, props.option.month, day) || isHoliday(day)}">
+                                :class="{
+                                'font-bold': props.option.advanced.boldWeekends && (isWeekend(props.option.year, props.option.month, day) || isHoliday(day)),
+                                }"
+                                :style="holidayTextStyle(day)">
                                 {{ day }}
                             </td>
                             <td 
-                                class="col-span-1  border text-center text-lg p-0" 
-                                :class="{'font-bold': isWeekend(props.option.year, props.option.month, day) || isHoliday(day), 'text-red-500': isSunday(props.option.year, props.option.month, day) || isHoliday(day)}">
+                                class="col-span-1 border text-center text-lg p-0" 
+                                :class="{
+                                'font-bold': props.option.advanced.boldWeekends && (isWeekend(props.option.year, props.option.month, day) || isHoliday(day)),
+                                }"
+                                :style="holidayTextStyle(day)">
                                 {{ getLocaleWeekday(day) }}
                             </td>
-                            <td class="col-span-10 border p-0">
+                            <td class="col-span-4 lg:col-span-10 border p-0">
                                 <p  v-if="isHoliday(day) && option.advanced.showHolidayText"
                                     class="text-lg px-2" 
                                     :class="{
@@ -38,7 +44,8 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { getNumberOfDays, isWeekend, isSunday } from '../utils/dateTime'
 import { getHolidays } from '../utils/holiday'
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
+
 const props = defineProps(['option']);
 const holidays = ref([]);
 const fetchHolidays = async () => {
@@ -51,9 +58,22 @@ const fetchHolidays = async () => {
 }
 
 const daysOfMonth = computed(() => getNumberOfDays(props.option.year, props.option.month));
+const holidayTextStyle = (day)=>{
+    if (isHoliday(day) || isSunday(props.option.year, props.option.month, day)){
+        return { 
+            'color': props.option.advanced.holidayColor
+        }
+    }
+};
 
-const getLocaleWeekday = (day) => moment(`${props.option.year}-${props.option.month}-${day}`).format('ddd');
-const getLocaleMonth = () => moment(`${props.option.year}-${props.option.month}-01`).format('MMMM');
+const getLocaleWeekday = (day) => {
+    moment.locale(props.option.locale)
+    return moment(`${props.option.year}-${props.option.month}-${day}`, 'YYYY-MM-DD').format('ddd');
+}
+const getLocaleMonth = () => {
+    moment.locale(props.option.locale);
+    return moment(`${props.option.year}-${props.option.month}-01`, 'YYYY-MM-DD').format('MMMM');
+}
 const isHoliday = (day) => {
     if (props.option.advanced.region === 'all'){
         return holidays.value.some(holiday => holiday.day === day);
@@ -70,5 +90,5 @@ const getHolidayDetails = (day) =>{
     }
 }
 onMounted(fetchHolidays);
-watch(props.option, fetchHolidays)
+watch(fetchHolidays)
 </script>

@@ -19,12 +19,15 @@ const option = ref({
     font: "font-ibm",
     country: country,
     showHoliday: true,
+    locale: navigator.language.toLowerCase(),
     advanced:{
         showHolidayText: true,
         boldWeekends: true,
         region: 'all',
         useLocalName: true,
-        holidayAlign: 'left'
+        holidayAlign: 'left',
+        boldWeekends: true,
+        holidayColor: '#EF4444',
     }
 })
 const theme =ref('bumblebee');
