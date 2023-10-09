@@ -155,7 +155,7 @@ const getNativeName = (code) =>{
         let regionName = newLanguage.of(code.substring(3, 5).toUpperCase());
         return `${language} (${regionName})`
     } else {
-        return ISO6391.getNativeName(code);
+        return ISO6391.getNativeName(code) === '' ? code : ISO6391.getNativeName(code);
     }
 }
 onMounted(async () => {
