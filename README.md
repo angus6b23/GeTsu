@@ -1,25 +1,34 @@
-# print-cal
+<div align = center>
+<img src="https://raw.githubusercontent.com/angus6b23/GeTsu/master/public/logo.svg" width="800" height="300" alt="hk-transport-logo">
+</div>
 
-Simple website for generating vertical calendar for printing. Built with vue.js
+# GeTsu Monthly Planner Generator
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Live
- - [Netlify](https://print-cal.netlify.app)
- - [12a.app](https://12a.app/print-cal)
+A simple, yet customizable monthly planner generator.
 
-## Project Setup
+## Features
 
-```sh
-npm install
-```
+- [Live site](https://getsu.12a.app)
+- Generate a portrait calendar like Calendarpedia
+- No annoying ads / watermark
+- Customizable title, locale, holiday and color
+- Readily printable on A4
 
-### Compile and Hot-Reload for Development
+## Installing
 
-```sh
-npm run dev
-```
+1.  Clone the git repository
 
-### Compile and Minify for Production
+    `https://github.com/angus6b23/GeTsu.git`
+    
+2.  Run yarn / npm
 
-```sh
-npm run build
-```
+    Using yarn
+    
+    `yarn && yarn run build`
+    
+    Using npm
+    
+    `npm && npm run build`
+
+3. Serve the files in /dist folder
