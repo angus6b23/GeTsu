@@ -2,8 +2,8 @@
     <section class="flex justify-center mt-4 lg:mt-10 paper-section">
         <div class="lg:w-[210mm] lg:h-[297mm] lg:border-2 lg:mt-10 w-full paper-wrapper" :class="props.option.font">
             <div class="w-full h-full lg:px-20 lg:py-4 px-4 py-2">
-                <h1 class="text-3xl my-2">{{ getLocaleMonth() }} {{ props.option.year }}</h1>
-                <h2 class="text-2xl mb-2">{{ props.option.title }}</h2>
+                <h1 class="print-no-margin text-3xl my-1">{{ getLocaleMonth() }} {{ props.option.year }}</h1>
+                <h2 class="print-no-margin text-2xl mb-2">{{ props.option.title }}</h2>
                 <table class="w-full border-collapse border">
                     <tbody class=" p-0">
                         <tr v-for="day in daysOfMonth" class="h-8 grid grid-cols-6 lg:grid-cols-12 gap-0 w-full p-0">
