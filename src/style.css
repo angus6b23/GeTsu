@@ -6,6 +6,9 @@
 	.not-for-print{
 		display: none;
 	}
+	.print-no-margin{
+		margin: 0px;
+	}
 	.paper-section{
 		margin: 0px;
 		padding: 0px;
