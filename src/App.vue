@@ -1,13 +1,11 @@
 <template>
     <div :data-theme="theme">
-        <Topbar :option="option" @changeTheme="changeTheme" />
+        <Topbar @changeTheme="changeTheme" />
         <Events
-            :option="option"
-            :events="events"
             @addEvent="addEvent"
             @clearEvent="clearEvent"
         />
-        <PaperArea :option="option" :events="events" @updateEvent="updateEvent" @removeEvent="removeEvent" />
+        <PaperArea @updateEvent="updateEvent" @removeEvent="removeEvent" />
     </div>
 </template>
 

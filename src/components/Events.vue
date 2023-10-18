@@ -1,11 +1,12 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { getNumberOfDays } from '../utils/dateTime'
-const props = defineProps(['option', 'events'])
+const option = inject('option')
+const events = inject('events')
 const emit = defineEmits(['addEvent', 'clearEvent'])
 const eventModal = ref(null)
 const maxDays = computed(() =>
-    getNumberOfDays(props.option.year, props.option.month)
+    getNumberOfDays(option.value.year, option.value.month)
 )
 const eventItem = ref({
     day: 1,
