@@ -1,13 +1,18 @@
 <template>
     <div :data-theme="theme">
         <Topbar :option="option" @changeTheme="changeTheme" />
-        <Events :option="option" :events="events" @addEvent="addEvent" @clearEvent="clearEvent"/>
-        <PaperArea :option="option" :events="events" />
+        <Events
+            :option="option"
+            :events="events"
+            @addEvent="addEvent"
+            @clearEvent="clearEvent"
+        />
+        <PaperArea :option="option" :events="events" @updateEvent="updateEvent" @removeEvent="removeEvent" />
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, provide } from 'vue'
 import { nanoid } from 'nanoid'
 import Topbar from './components/Topbar.vue'
 import PaperArea from './components/PaperArea.vue'
@@ -34,21 +39,30 @@ const option = ref({
         holidayColor: '#EF4444',
     },
 })
+provide('option', option)
+provide('events', events)
+
 const theme = ref('bumblebee')
 
 const changeTheme = () => {
     theme.value = theme.value === 'bumblebee' ? 'forest' : 'bumblebee'
 }
 const addEvent = (event) => {
-    const {day, detail} = event
+    const { day, detail } = event
     events.value.push({
-        id: nanoid,
+        id: nanoid(5),
         day: day,
-        detail: detail
+        detail: detail,
     })
 }
 const clearEvent = () => {
     events.value = []
+}
+const updateEvent = (eventItem) => {
+    events.value = events.value.map(event => event.id === eventItem.value.id ? eventItem.value : event)
+}
+const removeEvent = (eventItem) => {
+    events.value = events.value.filter(event => event.id !== eventItem.value.id)
 }
 </script>
 

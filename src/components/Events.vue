@@ -29,27 +29,46 @@ const clearEvent = () => {
         </div>
     </section>
     <dialog ref="eventModal" class="modal">
-    <div class="modal-box">
-        <h3 class="font-bold text-lg">Add Event</h3>
-        <form method="dialog">
-            <div class="py-4">
-                <label for="day" class="label">
-                    <span class="label-text">
-                        Please select day of event</span>
-                </label>
-                <input class="input input-bordered" v-model="eventItem.day" type="number" min="1" :max="maxDays" name="day" />
-                <label for="description" class="label mt-2">
-                    <span class="label-text">
-                        Please input name of event</span>
-                </label>
-                <input type="text" class="input input-bordered" v-model="eventItem.detail" name="description" required />
-            </div>
-            <div class="w-full flex justify-between modal-action">
-                <button class="btn btn-primary" @click="addEvent">Add Event</button>
-                <button class="btn">Close</button>
-            </div>
-        </form>
-    </div>
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Add Event</h3>
+            <form method="dialog" @submit="addEvent">
+                <div class="py-4">
+                    <label for="day" class="label">
+                        <span class="label-text">
+                            Please select day of event</span
+                        >
+                    </label>
+                    <input
+                        class="input input-bordered"
+                        v-model="eventItem.day"
+                        type="number"
+                        min="1"
+                        :max="maxDays"
+                        name="day"
+                    />
+                    <label for="description" class="label mt-2">
+                        <span class="label-text">
+                            Please input name of event</span
+                        >
+                    </label>
+                    <input
+                        type="text"
+                        class="input input-bordered"
+                        v-model="eventItem.detail"
+                        name="description"
+                        required
+                    />
+                </div>
+                <div class="w-full flex justify-between modal-action">
+                    <button class="btn btn-primary" type="submit">
+                        Add Event
+                    </button>
+                    <button class="btn" @click.prevent="eventModal.close()">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
     </dialog>
 </template>
 

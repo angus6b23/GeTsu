@@ -219,14 +219,13 @@
     </dialog>
 </template>
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, inject } from 'vue'
 import { fonts } from '../utils/styles'
 import { getAvailableCountries, getRegions } from '../utils/holiday'
 import { ColorPicker } from 'vue-accessible-color-picker'
 import moment from 'moment/min/moment-with-locales'
 import ISO6391 from 'iso-639-1'
-const props = defineProps(['option'])
-const modalOption = ref(props.option)
+const modalOption = ref(inject('option'))
 const countryList = ref([])
 const regionList = ref([])
 const colorModal = ref(null)
@@ -267,7 +266,10 @@ onMounted(async () => {
     regionList.value = await getRegions(modalOption.value.country)
 })
 
-watch(props.option, async () => {
-    regionList.value = await getRegions(modalOption.value.country)
-})
+watch(
+    () => modalOption.value.country,
+    async () => {
+        regionList.value = await getRegions(modalOption.value.country)
+    }
+)
 </script>

@@ -74,8 +74,13 @@
                                             : getHolidayDetails(day).name
                                     }}
                                 </span>
-                                <span v-for="eventItem of eventOfDay(day)" :key="eventItem.id" class="text-lg px-2">
-                                    {{ eventItem }}
+                                <span
+                                    v-for="eventItem of eventOfDay(day)"
+                                    :key="eventItem.id"
+                                    @click="showEditModal(eventItem.id)"
+                                    class="text-lg px-2 hover:bg-primary hover:border-2 hover:border-neutral cursor-pointer"
+                                >
+                                    {{ eventItem.detail }}
                                 </span>
                             </td>
                         </tr>
@@ -83,16 +88,29 @@
                 </table>
             </div>
         </div>
+        <dialog ref="editModal" class="modal">
+            <div class="modal-box">
+                <EditModal :id="editId" :modal="editModal" @updateEvent="updateEvent" @removeEvent="removeEvent" />
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
     </section>
 </template>
+
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { getNumberOfDays, isWeekend, isSunday } from '../utils/dateTime'
 import { getHolidays } from '../utils/holiday'
 import moment from 'moment/min/moment-with-locales'
+import EditModal from './EditModal.vue'
 
 const props = defineProps(['option', 'events'])
+                                        const emits = defineEmits(['updateEvent', 'removeEvent'])
 const holidays = ref([])
+const editId = ref('')
+const editModal = ref(null)
 const fetchHolidays = async () => {
     if (props.option.showHoliday) {
         let holidayRes = await getHolidays(
@@ -105,7 +123,6 @@ const fetchHolidays = async () => {
         holidays.value = []
     }
 }
-
 const daysOfMonth = computed(() =>
     getNumberOfDays(props.option.year, props.option.month)
 )
@@ -154,8 +171,17 @@ const getHolidayDetails = (day) => {
     }
 }
 const eventOfDay = (day) => {
-    const filtered = props.events.filter(item => item.day === day);
-    return filtered.map(item => item.detail) 
+    return props.events.filter((item) => item.day === day)
+}
+const showEditModal = (id) => {
+    editId.value = id
+    editModal.value.showModal()
+}
+const updateEvent = (eventItem) =>{
+    emits('updateEvent', eventItem)
+}
+const removeEvent = (eventItem) =>{
+    emits('removeEvent', eventItem)
 }
 onMounted(fetchHolidays)
 watch(fetchHolidays)
