@@ -150,7 +150,7 @@
                             <div
                                 class="modal-box w-full lg:w-4/5 xl:w-3/5 max-w-5xl"
                             >
-                                <OptionModal :option="innerOption" />
+                                <OptionModal />
                             </div>
                             <form method="dialog" class="modal-backdrop">
                                 <button>close</button>
@@ -163,7 +163,7 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { fonts } from '../utils/styles'
 import { getAvailableCountries } from '../utils/holiday'
 import cogSVG from '@/assets/cog.svg'
@@ -171,9 +171,8 @@ import sunSVG from '@/assets/sun.svg'
 import moonSVG from '@/assets/moon.svg'
 import OptionModal from '@/components/OptionModal.vue'
 
-const props = defineProps(['option'])
 const emit = defineEmits(['update:option', 'changeTheme'])
-const innerOption = ref(props.option)
+const innerOption = ref(inject('option'))
 const modal = ref('null')
 const countryList = ref([])
 
