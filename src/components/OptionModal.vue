@@ -195,7 +195,37 @@
                         class="h-8 w-8 rounded mr-10"
                         :style="holidayBgStyle"
                     ></div>
-                    <button class="btn" @click.prevent="colorModal.showModal()">
+                    <button class="btn" @click.prevent="showHolidayColorModal">
+                        Change
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="collapse collapse-plus border border-base-300 bg-base-100 mt-4">
+        <input type="checkbox" checked />
+        <div class="collapse-title text-xl bg-primary">Events</div>
+        <div class="collapse-content">
+            <div class="form-control w-full grid grid-cols-2 gap-2 mt-4">
+                <label class="label">
+                    <span class="label-text text-lg"
+                        >Retent events when changing month and year</span
+                    >
+                </label>
+                <div class="flex items-center justify-center">
+                    <input
+                        type="checkbox"
+                        class="toggle toggle-primary"
+                        v-model="modalOption.advanced.retentEvents"
+                    />
+                </div>
+                <label class="label">Default Events Color</label>
+                <div class="flex items-center justify-center">
+                    <div
+                        class="h-8 w-8 rounded mr-10"
+                        :style="eventBgStyle"
+                    ></div>
+                    <button class="btn" @click.prevent="showEventColorModal">
                         Change
                     </button>
                 </div>
@@ -203,32 +233,21 @@
         </div>
     </div>
     <dialog ref="colorModal" class="modal">
-        <div class="modal-box">
-            <ColorPicker
-                :color="modalOption.advanced.holidayColor"
-                default-format="hex"
-                alpha-channel="hide"
-                @color-change="updateColor"
-            />
-            <form method="dialog" class="flex gap-4 items-center">
-                <!-- if there is a button in form, it will close the modal -->
-                <div class="h-8 w-8 rounded" :style="holidayBgStyle"></div>
-                <button class="btn">Close</button>
-            </form>
-        </div>
+        <ColorModal :color="optionColor" @updateColor="handleChangeColor" />
     </dialog>
 </template>
 <script setup>
 import { ref, watch, onMounted, computed, inject } from 'vue'
 import { fonts } from '../utils/styles'
 import { getAvailableCountries, getRegions } from '../utils/holiday'
-import { ColorPicker } from 'vue-accessible-color-picker'
+import ColorModal from './ColorModal.vue'
 import moment from 'moment/min/moment-with-locales'
 import ISO6391 from 'iso-639-1'
 const modalOption = ref(inject('option'))
 const countryList = ref([])
 const regionList = ref([])
 const colorModal = ref(null)
+const optionColor = ref('')
 
 const holidayAdvancedDisabled = computed(
     () =>
@@ -240,12 +259,24 @@ const holidayBgStyle = computed(() => {
         'background-color': modalOption.value.advanced.holidayColor,
     }
 })
+const eventBgStyle = computed(() => {
+    return {
+        'background-color': modalOption.value.advanced.defaultEventColor,
+    }
+})
 
-const updateColor = ({ colors }) => {
-    let hex = colors.hex.replace(/ff$/, '')
-    modalOption.value.advanced.holidayColor = hex
+const handleChangeColor = (color, type) => {
+    switch (type) {
+        case 'event':
+            modalOption.value.advanced.defaultEventColor = color
+            break
+        case 'holiday':
+            modalOption.value.advanced.holidayColor = color
+            break
+        default:
+            throw new Error('unknown type on handle color change')
+    }
 }
-
 const getNativeName = (code) => {
     if (code.length > 5) {
         return code
@@ -266,6 +297,20 @@ onMounted(async () => {
     regionList.value = await getRegions(modalOption.value.country)
 })
 
+const showHolidayColorModal = () => {
+    optionColor.value = {
+        type: 'holiday',
+        color: modalOption.value.advanced.holidayColor,
+    }
+    colorModal.value.showModal()
+}
+const showEventColorModal = () => {
+    optionColor.value = {
+        type: 'event',
+        color: modalOption.value.advanced.defaultEventColor,
+    }
+    colorModal.value.showModal()
+}
 watch(
     () => modalOption.value.country,
     async () => {
