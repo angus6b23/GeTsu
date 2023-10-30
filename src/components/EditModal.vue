@@ -90,7 +90,7 @@ eventItem.value = { ...targetEvent }
                 Change
             </button>
         </div>
-        <div class="w-full flex justify-between modal-action">
+        <div class="w-full flex flex-wrap justify-between modal-action gap-2">
             <button class="btn btn-primary" type="submit">Update Event</button>
             <button class="btn btn-warning" @click.prevent="removeEvent">
                 Delete Event

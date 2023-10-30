@@ -100,7 +100,8 @@ watch(
                             Change
                         </button>
                     </div>
-                    <div class="w-full flex justify-between modal-action">
+                    <div class="w-full flex flex-wrap justify-between modal-action">
+                        <p class="w-full mb-2">You can change the details by clicking on the event afterwards.</p>
                         <button class="btn btn-primary" type="submit">
                             Add Event
                         </button>
