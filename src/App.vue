@@ -1,21 +1,25 @@
 <template>
     <div :data-theme="theme">
-        <Topbar @changeTheme="changeTheme" />
-        <Events
-            @addEvent="addEvent"
-            @clearEvent="clearEvent"
+        <Topbar :option="option" @changeTheme="changeTheme" />
+        <Events @addEvent="addEvent" @clearEvent="clearEvent" />
+        <PaperArea
+            :option="option"
+            :events="events"
+            @updateEvent="updateEvent"
+            @removeEvent="removeEvent"
         />
-        <PaperArea @updateEvent="updateEvent" @removeEvent="removeEvent" />
+        <Footer />
     </div>
 </template>
 
 <script setup>
-import { ref, provide } from 'vue'
+import { ref, provide, watch } from 'vue'
 import { nanoid } from 'nanoid'
 import Topbar from './components/Topbar.vue'
 import PaperArea from './components/PaperArea.vue'
 import Events from './components/Events.vue'
 import { guessCountry } from './utils/dateTime'
+import Footer from './components/Footer.vue'
 const now = new Date()
 const country = guessCountry() === null ? 'unknown' : guessCountry().id
 const events = ref([])
@@ -35,6 +39,8 @@ const option = ref({
         holidayAlign: 'left',
         boldWeekends: true,
         holidayColor: '#EF4444',
+        retentEvents: false,
+        defaultEventColor: '#000000',
     },
 })
 provide('option', option)
@@ -46,10 +52,11 @@ const changeTheme = () => {
     theme.value = theme.value === 'bumblebee' ? 'forest' : 'bumblebee'
 }
 const addEvent = (event) => {
-    const { day, detail } = event
+    const { day, detail, eventColor } = event
     events.value.push({
         id: nanoid(5),
         day: day,
+        eventColor: eventColor,
         detail: detail,
     })
 }
@@ -57,11 +64,23 @@ const clearEvent = () => {
     events.value = []
 }
 const updateEvent = (eventItem) => {
-    events.value = events.value.map(event => event.id === eventItem.value.id ? eventItem.value : event)
+    events.value = events.value.map((event) =>
+        event.id === eventItem.value.id ? eventItem.value : event
+    )
 }
 const removeEvent = (eventItem) => {
-    events.value = events.value.filter(event => event.id !== eventItem.value.id)
+    events.value = events.value.filter(
+        (event) => event.id !== eventItem.value.id
+    )
 }
+watch(
+    () => [option.value.year, option.value.month],
+    () => {
+        if (!option.value.advanced.retentEvents) {
+            events.value = []
+        }
+    }
+)
 </script>
 
 <style>

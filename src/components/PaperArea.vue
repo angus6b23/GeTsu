@@ -58,14 +58,14 @@
                                     class="text-lg px-2"
                                     :class="{
                                         'text-right':
-                                            option.advanced
-                                                .holidayAlign === 'right',
+                                            option.advanced.holidayAlign ===
+                                            'right',
                                         'text-center':
-                                            option.advanced
-                                                .holidayAlign === 'center',
+                                            option.advanced.holidayAlign ===
+                                            'center',
                                         'text-left':
-                                            option.advanced
-                                                .holidayAlign === 'left',
+                                            option.advanced.holidayAlign ===
+                                            'left',
                                     }"
                                 >
                                     {{
@@ -79,6 +79,7 @@
                                     :key="eventItem.id"
                                     @click="showEditModal(eventItem.id)"
                                     class="text-lg px-2 hover:bg-primary hover:border-2 hover:border-neutral cursor-pointer"
+                                    :style="{ color: eventItem.eventColor }"
                                 >
                                     {{ eventItem.detail }}
                                 </span>
@@ -90,7 +91,12 @@
         </div>
         <dialog ref="editModal" class="modal">
             <div class="modal-box">
-                <EditModal :id="editId" :modal="editModal" @updateEvent="updateEvent" @removeEvent="removeEvent" />
+                <EditModal
+                    :id="editId"
+                    :modal="editModal"
+                    @updateEvent="updateEvent"
+                    @removeEvent="removeEvent"
+                />
             </div>
             <form method="dialog" class="modal-backdrop">
                 <button>close</button>
@@ -106,9 +112,9 @@ import { getHolidays } from '../utils/holiday'
 import moment from 'moment/min/moment-with-locales'
 import EditModal from './EditModal.vue'
 
-                                        const option = inject('option')
-                                        const events = inject('events')
-                                        const emits = defineEmits(['updateEvent', 'removeEvent'])
+const option = inject('option')
+const events = inject('events')
+const emits = defineEmits(['updateEvent', 'removeEvent'])
 const holidays = ref([])
 const editId = ref('')
 const editModal = ref(null)
@@ -178,10 +184,10 @@ const showEditModal = (id) => {
     editId.value = id
     editModal.value.showModal()
 }
-const updateEvent = (eventItem) =>{
+const updateEvent = (eventItem) => {
     emits('updateEvent', eventItem)
 }
-const removeEvent = (eventItem) =>{
+const removeEvent = (eventItem) => {
     emits('removeEvent', eventItem)
 }
 onMounted(fetchHolidays)
