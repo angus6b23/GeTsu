@@ -243,9 +243,10 @@ import { getAvailableCountries, getRegions } from '../utils/holiday'
 import ColorModal from './ColorModal.vue'
 import moment from 'moment/min/moment-with-locales'
 import ISO6391 from 'iso-639-1'
+const emit = defineEmits(['updateRegionList'])
 const modalOption = ref(inject('option'))
 const countryList = ref([])
-const regionList = ref([])
+const regionList = inject('regionList')
 const colorModal = ref(null)
 const optionColor = ref('')
 
@@ -294,7 +295,8 @@ const getNativeName = (code) => {
 }
 onMounted(async () => {
     countryList.value = await getAvailableCountries()
-    regionList.value = await getRegions(modalOption.value.country)
+    const list = await getRegions(modalOption.value.country)
+    emit('updateRegionList', list)
 })
 
 const showHolidayColorModal = () => {
@@ -314,7 +316,9 @@ const showEventColorModal = () => {
 watch(
     () => modalOption.value.country,
     async () => {
-        regionList.value = await getRegions(modalOption.value.country)
+        const list = await getRegions(modalOption.value.country)
+        emit('updateRegionList', list)
+        modalOption.value.advanced.region = 'all'
     }
 )
 </script>

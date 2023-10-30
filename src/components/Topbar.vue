@@ -8,7 +8,7 @@
                     class="col-span-3 hidden md:grid md:grid-cols-2 xl:grid-cols-8"
                 >
                     <div
-                        class="flex items-center justify-center flex-wrap col-span-1"
+                        class="flex items-center justify-start xl:justify-center flex-wrap col-span-1"
                     >
                         <div>
                             <label class="label mr-2" for="year-select">
@@ -25,7 +25,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex items-center justify-center col-span-1">
+                    <div
+                        class="flex items-center justify-start xl:justify-center col-span-1"
+                    >
                         <div>
                             <label class="label mr-2" for="year-select">
                                 <span class="labe-text text-lg">Month</span>
@@ -42,7 +44,7 @@
                         </div>
                     </div>
                     <div
-                        class="flex item-center justify-center col-span-2 px-8 xl:p-8 form-control"
+                        class="flex item-center justify-start xl:justify-center col-span-2 xl:p-8 form-control"
                     >
                         <label class="label" for="show-holiday">
                             <span class="label-text text-lg"
@@ -73,7 +75,7 @@
                         </select>
                     </div>
                     <div
-                        class="flex items-center justify-center flex-wrap md:col-span-1 xl:col-span-2"
+                        class="flex items-center justify-start xl:justify-center flex-wrap md:col-span-1 xl:col-span-2"
                     >
                         <div>
                             <label for="title" class="label text-lg mr-2"
@@ -89,7 +91,7 @@
                         </div>
                     </div>
                     <div
-                        class="flex items-center justify-center flex-wrap md:col-span-1 xl:col-span-2"
+                        class="flex items-center justify-start xl:justify-center flex-wrap md:col-span-1 xl:col-span-2"
                     >
                         <div>
                             <label for="font-select" class="label text-lg mr-2"
@@ -150,7 +152,9 @@
                             <div
                                 class="modal-box w-full lg:w-4/5 xl:w-3/5 max-w-5xl"
                             >
-                                <OptionModal />
+                                <OptionModal
+                                    @updateRegionList="updateRegionList"
+                                />
                             </div>
                             <form method="dialog" class="modal-backdrop">
                                 <button>close</button>
@@ -171,11 +175,14 @@ import sunSVG from '@/assets/sun.svg'
 import moonSVG from '@/assets/moon.svg'
 import OptionModal from '@/components/OptionModal.vue'
 
-const emit = defineEmits(['update:option', 'changeTheme'])
+const emit = defineEmits(['update:option', 'changeTheme', 'updateRegionList'])
 const innerOption = ref(inject('option'))
 const modal = ref('null')
 const countryList = ref([])
 
+const updateRegionList = (list) => {
+    emit('updateRegionList', list)
+}
 onMounted(async () => {
     const avaliableCountries = await getAvailableCountries()
     countryList.value = avaliableCountries

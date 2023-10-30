@@ -1,13 +1,13 @@
 <template>
     <div :data-theme="theme">
-        <Topbar :option="option" @changeTheme="changeTheme" />
-        <Events @addEvent="addEvent" @clearEvent="clearEvent" />
-        <PaperArea
+        <Topbar
             :option="option"
-            :events="events"
-            @updateEvent="updateEvent"
-            @removeEvent="removeEvent"
+            @changeTheme="changeTheme"
+            @updateRegionList="updateRegionList"
         />
+        <Alert />
+        <Events @addEvent="addEvent" @clearEvent="clearEvent" />
+        <PaperArea @updateEvent="updateEvent" @removeEvent="removeEvent" />
         <Footer />
     </div>
 </template>
@@ -20,9 +20,11 @@ import PaperArea from './components/PaperArea.vue'
 import Events from './components/Events.vue'
 import { guessCountry } from './utils/dateTime'
 import Footer from './components/Footer.vue'
+import Alert from './components/Alert.vue'
 const now = new Date()
 const country = guessCountry() === null ? 'unknown' : guessCountry().id
 const events = ref([])
+const regionList = ref([])
 const option = ref({
     year: now.getFullYear(),
     month: now.getMonth() + 1,
@@ -45,6 +47,7 @@ const option = ref({
 })
 provide('option', option)
 provide('events', events)
+provide('regionList', regionList)
 
 const theme = ref('bumblebee')
 
@@ -72,6 +75,9 @@ const removeEvent = (eventItem) => {
     events.value = events.value.filter(
         (event) => event.id !== eventItem.value.id
     )
+}
+const updateRegionList = (list) => {
+    regionList.value = list
 }
 watch(
     () => [option.value.year, option.value.month],
