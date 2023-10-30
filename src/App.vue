@@ -8,6 +8,7 @@
             @updateEvent="updateEvent"
             @removeEvent="removeEvent"
         />
+        <Footer />
     </div>
 </template>
 
@@ -18,6 +19,7 @@ import Topbar from './components/Topbar.vue'
 import PaperArea from './components/PaperArea.vue'
 import Events from './components/Events.vue'
 import { guessCountry } from './utils/dateTime'
+import Footer from './components/Footer.vue'
 const now = new Date()
 const country = guessCountry() === null ? 'unknown' : guessCountry().id
 const events = ref([])
